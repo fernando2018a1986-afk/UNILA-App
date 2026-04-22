@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multi Login Hub</title>
+
+<style>
+:root {
+    --bg: #0f172a;
+    --card: #1e293b;
+    --whatsapp: #25D366;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: var(--bg);
+    color: white;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    padding: 16px;
+    text-align: center;
+    background: var(--card);
+    font-weight: bold;
+}
+
+.menu {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    padding: 16px;
+}
+
+button {
+    padding: 16px;
+    border-radius: 14px;
+    border: none;
+    font-size: 15px;
+    cursor: pointer;
+    color: white;
+}
+
+.unila { background: #2563eb; }
+.gmail { background: #ea4335; }
+.sigaa { background: #9333ea; }
+.google { background: #fbbc05; color: black; }
+.facebook { background: #1877f2; }
+.whatsapp { background: var(--whatsapp); }
+
+#viewer {
+    flex: 1;
+    border: none;
+    display: none;
+}
+
+.back-btn {
+    display: none;
+    padding: 12px;
+    background: #ef4444;
+    text-align: center;
+    cursor: pointer;
+}
+
+.status {
+    text-align: center;
+    font-size: 14px;
+    color: #94a3b8;
+    padding-bottom: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<header>Multi Login Hub</header>
+
+<div id="home">
+    <div class="menu">
+        <button class="unila" onclick="openSmart('https://portal.unila.edu.br/')">UNILA</button>
+        <button class="gmail" onclick="openSmart('https://mail.google.com/')">Gmail</button>
+        <button class="sigaa" onclick="openSmart('https://autenticacao-sig.unila.edu.br/sso-server/login?service=https%3A%2F%2Fsig.unila.edu.br%2Fsigaa%2Flogin%2Fcas')">SIGAA</button>
+        <button class="google" onclick="openSmart('https://www.google.com/')">Google</button>
+        <button class="facebook" onclick="openSmart('https://www.facebook.com/unila.oficial')">Facebook UNILA</button>
+        <button class="whatsapp" onclick="openWhats()">Compartilhar no WhatsApp</button>
+    </div>
+
+    <div class="status" id="status">Toque para acessar</div>
+</div>
+
+<div class="back-btn" id="backBtn" onclick="goHome()">⬅ Voltar ao início</div>
+
+<iframe id="viewer"></iframe>
+
+<script>
+const viewer = document.getElementById("viewer");
+const home = document.getElementById("home");
+const backBtn = document.getElementById("backBtn");
+const status = document.getElementById("status");
+
+// LISTA DE SITES QUE BLOQUEIAM IFRAME
+const blockedSites = [
+    "facebook.com",
+    "google.com",
+    "mail.google.com",
+    "wa.me"
+];
+
+// FUNÇÃO INTELIGENTE
+function openSmart(url) {
+    status.innerText = "Carregando...";
+
+    // verifica se está na lista bloqueada
+    const isBlocked = blockedSites.some(site => url.includes(site));
+
+    if (isBlocked) {
+        openExternal(url);
+        return;
+    }
+
+    // tenta abrir no iframe
+    home.style.display = "none";
+    viewer.style.display = "block";
+    backBtn.style.display = "block";
+
+    viewer.src = url;
+
+    // fallback automático
+    setTimeout(() => {
+        try {
+            if (!viewer.contentWindow.location.href) throw new Error();
+        } catch {
+            openExternal(url);
+        }
+    }, 2000);
+}
+
+// ABRIR FORA
+function openExternal(url) {
+    const win = window.open(url, "_blank");
+    if (!win) window.location.href = url;
+}
+
+// VOLTAR
+function goHome() {
+    viewer.src = "";
+    viewer.style.display = "none";
+    home.style.display = "block";
+    backBtn.style.display = "none";
+    status.innerText = "Toque para acessar";
+}
+
+// WHATSAPP
+function openWhats() {
+    const url = "https://wa.me/message/TVT6FVFLPV63E1";
+    openExternal(url);
+}
+</script>
+
+</body>
+</html>
